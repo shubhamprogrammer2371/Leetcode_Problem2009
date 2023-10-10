@@ -1,0 +1,109 @@
+int ascend(const void* pa, const void* pb) {
+    return (*(int*)pa - *(int*)pb);
+}
+int remove_duplicates(int* arr, int arrSize) {
+    // Linear Search
+    // Time complexity: O(n)
+    // Space complexity: O(n)
+    // Remove duplicate numbers from a sorted array by using extra space
+    //   1. Create an auxiliary array temp[] to store unique elements, 
+    //      with its size at most the same as arrSize.
+    //   2. Traverse the input array arr[] and copy the elements one by one to temp[]. 
+    //      Also, keep track of the 'count' of unique elements to determine the new array's size.
+    //   3. Copy and overwrite 'count' number of elements from temp[] to arr[], then return 'count.'
+
+    if (arrSize <= 1) 
+        return arrSize;
+    int temp[arrSize] , count = 0;
+    for (int i = 0; i < arrSize - 1; ++i) {
+        if (arr[i] == arr[i + 1]) 
+            continue;
+        temp[count++] = arr[i];  // If the current element is not equal to the next element, then store that element. 
+    }
+    temp[count++] = arr[arrSize - 1]; // Store the last element no matter what, as it hasn't been seen previously. 
+    for (int i = 0; i < count; ++i) // Copy and overwrite the original array
+        arr[i] = temp[i];
+    return count;
+}
+int minOperations(int* nums, int numsSize) {
+    // Slinding Window
+    // Time complexity: O(nlogn)
+    // Space complexity: O(n)
+
+    int result = numsSize;
+    qsort(nums, numsSize, sizeof(int), ascend);
+    const int n = remove_duplicates(nums, numsSize);
+    for (int i = 0, j = 0; i < n; ++i) 
+    {
+        while (j < n && nums[j] < nums[i] + numsSize)
+            j++;
+        result = fmin(result, numsSize - (j - i));
+    }
+    return result;
+}
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+int ascend(const void* pa, const void* pb) {
+    return (*(int*)pa - *(int*)pb);
+}
+int remove_duplicates(int* arr, int arrSize) {
+    // Linear Search
+    // Time complexity: O(n)
+    // Space complexity: O(n)
+    // Remove duplicate numbers from a sorted array by using extra space
+    //   1. Create an auxiliary array temp[] to store unique elements, 
+    //      with its size at most the same as arrSize.
+    //   2. Traverse the input array arr[] and copy the elements one by one to temp[]. 
+    //      Also, keep track of the 'count' of unique elements to determine the new array's size.
+    //   3. Copy and overwrite 'count' number of elements from temp[] to arr[], then return 'count.'
+
+    if (arrSize <= 1) 
+        return arrSize;
+    int temp[arrSize] , count = 0;
+    for (int i = 0; i < arrSize - 1; ++i) {
+        if (arr[i] == arr[i + 1]) 
+            continue;
+        temp[count++] = arr[i];  // If the current element is not equal to the next element, then store that element. 
+    }
+    temp[count++] = arr[arrSize - 1]; // Store the last element no matter what, as it hasn't been seen previously. 
+    for (int i = 0; i < count; ++i) // Copy and overwrite the original array
+        arr[i] = temp[i];
+    return count;
+}
+
+int upper_bound(int* arr, int arrSize, int target) {
+    // Binary Search
+    // Time complexity: O(nlogn)
+    // Space complexity: O(1)
+    // Find upper bound from a sorted array
+    int middle = 0, left = 0, right = arrSize;
+    while (left < right) 
+    {
+        middle = left + (right - left) / 2;  // Find the middle index
+        if (target >= arr[middle])
+            left = middle + 1;  // Find in right subarray
+        else 
+            right = middle;    // Find in left subarray
+    }
+    if (left < arrSize && arr[left] <= target) // If 'target' is greater than arr[arrSize - 1] (the max element)
+        left++;
+    return left;  // Return the upper bound index
+}
+int minOperations(int* nums, int numsSize) {
+    // Binary Search
+    // Time complexity: O(nlogn)
+    // Space complexity: O(n)
+    int result = numsSize;
+    qsort(nums, numsSize, sizeof(int), ascend);
+    const int n = remove_duplicates(nums, numsSize);
+    for (int i = 0; i < numsSize; ++i) {
+        const int start = nums[i], end = start + numsSize - 1 , index = upper_bound(nums, n, end),unique_length = index - i;
+        result = fmin(result, numsSize - unique_length);
+    }
+    return result;
+}
